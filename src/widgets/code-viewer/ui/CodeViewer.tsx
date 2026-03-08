@@ -20,12 +20,12 @@ export function CodeViewer({ snippets, className }: CodeViewerProps) {
   return (
     <div
       className={cn(
-        'rounded-xl overflow-hidden glass border border-white/10 shadow-lg',
+        'rounded-xl overflow-hidden glass border border-border shadow-lg',
         className
       )}
     >
       {/* Tab bar */}
-      <div className="flex items-center gap-1 border-b border-white/10 px-3 pt-2 overflow-x-auto">
+      <div className="flex items-center gap-1 border-b border-border px-3 pt-2 overflow-x-auto">
         {snippets.map((snippet, index) => (
           <button
             key={snippet.language}
@@ -34,7 +34,7 @@ export function CodeViewer({ snippets, className }: CodeViewerProps) {
               'px-3 py-1.5 text-xs font-semibold rounded-t-md transition-colors whitespace-nowrap',
               index === activeIndex
                 ? 'bg-primary/20 text-primary border-b-2 border-primary'
-                : 'text-muted-foreground hover:text-foreground hover:bg-white/8'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
             )}
           >
             {snippet.label}

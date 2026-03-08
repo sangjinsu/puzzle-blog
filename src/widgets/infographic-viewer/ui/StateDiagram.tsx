@@ -1,7 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import type { StateNode, StateTransition } from '../model/types';
+import { getInfographicColors } from '../lib/svg-utils';
 
 interface StateDiagramProps {
   states: StateNode[];
@@ -9,7 +11,6 @@ interface StateDiagramProps {
 }
 
 const INDIGO = 'rgba(129,140,248,0.8)';
-const INDIGO_FILL = 'rgba(99,102,241,0.25)';
 const AMBER = 'rgba(251,191,36,0.9)';
 
 const NODE_W = 120;
@@ -69,13 +70,11 @@ function buildPath(
   const y2 = nodeCY;
 
   if (fromIdx === toIdx) {
-    // Self-loop: arc above the node
     const cx = x1;
     const topY = NODE_Y - 36;
     return `M ${x1 - 14} ${NODE_Y} C ${x1 - 28} ${topY}, ${x1 + 28} ${topY}, ${x1 + 14} ${NODE_Y}`;
   }
 
-  // Check if there's a reverse transition — offset this one
   const hasReverse = allTransitions.some((t) => {
     return t.from === allTransitions[transIndex]?.to && t.to === allTransitions[transIndex]?.from;
   });
@@ -87,11 +86,14 @@ function buildPath(
 }
 
 export function StateDiagram({ states, transitions }: StateDiagramProps) {
+  const { resolvedTheme } = useTheme();
+  const colors = getInfographicColors(resolvedTheme === 'dark');
+
   const totalW = states.length * (NODE_W + NODE_GAP) - NODE_GAP + PAD * 2;
   const svgH = 180;
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-muted p-4">
       <motion.svg
         viewBox={`0 0 ${totalW} ${svgH}`}
         className="w-full"
@@ -115,7 +117,6 @@ export function StateDiagram({ states, transitions }: StateDiagramProps) {
 
           const d = buildPath(fromIdx, toIdx, transitions, tIdx, transitions.length);
 
-          // Label position: midpoint of curve, shifted up
           const x1 = nodeCX(fromIdx);
           const x2 = nodeCX(toIdx);
           const isSelf = fromIdx === toIdx;
@@ -180,7 +181,7 @@ export function StateDiagram({ states, transitions }: StateDiagramProps) {
                 width={NODE_W}
                 height={NODE_H}
                 rx={10}
-                fill={INDIGO_FILL}
+                fill={colors.indigoFill}
                 stroke={INDIGO}
                 strokeWidth={state.isFinal ? 0 : 1.5}
               />
@@ -217,7 +218,7 @@ export function StateDiagram({ states, transitions }: StateDiagramProps) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize={12}
-                fill="white"
+                fill={colors.text}
                 fontFamily="system-ui, sans-serif"
                 fontWeight={600}
               >
@@ -230,12 +231,12 @@ export function StateDiagram({ states, transitions }: StateDiagramProps) {
         {/* Legend */}
         <motion.g variants={nodeVariants} transform={`translate(${PAD}, ${svgH - 22})`}>
           <circle cx={5} cy={5} r={5} fill={INDIGO} />
-          <text x={14} y={9} fontSize={9} fill="rgba(255,255,255,0.5)" fontFamily="system-ui">
+          <text x={14} y={9} fontSize={9} fill={colors.legendText} fontFamily="system-ui">
             Initial
           </text>
           <rect x={50} y={0} width={20} height={10} rx={2} fill="none" stroke={INDIGO} strokeWidth={1.2} />
           <rect x={52} y={2} width={16} height={6} rx={1} fill="none" stroke={INDIGO} strokeWidth={1.2} />
-          <text x={74} y={9} fontSize={9} fill="rgba(255,255,255,0.5)" fontFamily="system-ui">
+          <text x={74} y={9} fontSize={9} fill={colors.legendText} fontFamily="system-ui">
             Final
           </text>
         </motion.g>

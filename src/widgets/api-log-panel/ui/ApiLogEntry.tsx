@@ -11,16 +11,16 @@ interface ApiLogEntryProps {
 }
 
 const METHOD_STYLES: Record<string, string> = {
-  POST: 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30',
-  GET: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
-  PUT: 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
-  DELETE: 'bg-red-500/20 text-red-400 border border-red-500/30',
+  POST: 'bg-indigo-50 text-indigo-600 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/30',
+  GET: 'bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30',
+  PUT: 'bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/30',
+  DELETE: 'bg-red-50 text-red-600 border border-red-200 dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/30',
 };
 
 const STATUS_STYLES: Record<number, string> = {
-  200: 'text-emerald-400',
-  400: 'text-red-400',
-  409: 'text-amber-400',
+  200: 'text-emerald-600 dark:text-emerald-400',
+  400: 'text-red-600 dark:text-red-400',
+  409: 'text-amber-600 dark:text-amber-400',
 };
 
 function formatTime(timestamp: number): string {
@@ -36,7 +36,7 @@ export function ApiLogEntry({ entry }: ApiLogEntryProps) {
     <div
       className={cn(
         'glass-subtle rounded-lg overflow-hidden transition-colors',
-        hasBody && 'cursor-pointer hover:bg-white/5'
+        hasBody && 'cursor-pointer hover:bg-muted'
       )}
       onClick={() => hasBody && setExpanded((v) => !v)}
     >
@@ -46,7 +46,7 @@ export function ApiLogEntry({ entry }: ApiLogEntryProps) {
         <span
           className={cn(
             'shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold font-mono uppercase tracking-wide',
-            METHOD_STYLES[entry.method] ?? 'bg-white/10 text-foreground'
+            METHOD_STYLES[entry.method] ?? 'bg-muted text-foreground'
           )}
         >
           {entry.method}
@@ -93,13 +93,13 @@ export function ApiLogEntry({ entry }: ApiLogEntryProps) {
             transition={{ duration: 0.2, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <div className="border-t border-white/10 px-3 py-2 space-y-2">
+            <div className="border-t border-border px-3 py-2 space-y-2">
               {entry.request !== undefined && (
                 <div>
                   <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
                     Request
                   </p>
-                  <pre className="text-[10px] font-mono text-foreground/80 whitespace-pre-wrap break-all bg-black/20 rounded p-2 max-h-32 overflow-y-auto">
+                  <pre className="text-[10px] font-mono text-foreground/80 whitespace-pre-wrap break-all bg-slate-50 dark:bg-black/20 rounded p-2 max-h-32 overflow-y-auto">
                     {JSON.stringify(entry.request, null, 2)}
                   </pre>
                 </div>
@@ -109,7 +109,7 @@ export function ApiLogEntry({ entry }: ApiLogEntryProps) {
                   <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
                     Response
                   </p>
-                  <pre className="text-[10px] font-mono text-foreground/80 whitespace-pre-wrap break-all bg-black/20 rounded p-2 max-h-32 overflow-y-auto">
+                  <pre className="text-[10px] font-mono text-foreground/80 whitespace-pre-wrap break-all bg-slate-50 dark:bg-black/20 rounded p-2 max-h-32 overflow-y-auto">
                     {JSON.stringify(entry.response, null, 2)}
                   </pre>
                 </div>

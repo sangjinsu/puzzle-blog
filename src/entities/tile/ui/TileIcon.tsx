@@ -35,7 +35,7 @@ export function TileIcon({ color, type, size = 48, selected = false }: TileIconP
         ${colorInfo.bg} ${colorInfo.border}
         flex items-center justify-center rounded-lg border-2
         transition-shadow
-        ${selected ? 'ring-3 ring-white shadow-lg scale-110' : ''}
+        ${selected ? 'ring-3 ring-indigo-500 shadow-lg scale-110' : ''}
         ${isItem ? 'ring-2 ring-amber-300' : ''}
       `}
       style={{ width: size, height: size }}

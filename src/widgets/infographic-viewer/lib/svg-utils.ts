@@ -47,14 +47,32 @@ export const scaleInItem = {
   visible: { opacity: 1, scale: 1, transition: { duration: 0.35, ease: 'easeOut' as const } },
 } as const;
 
-/** Infographic color palette */
-export const INFOGRAPHIC_COLORS = {
-  indigo: 'rgba(129,140,248,0.8)',
-  emerald: 'rgba(16,185,129,0.8)',
-  amber: 'rgba(251,191,36,0.9)',
-  muted: 'rgba(255,255,255,0.4)',
-  nodeFill: 'rgba(255,255,255,0.08)',
-  nodeStroke: 'rgba(129,140,248,0.5)',
-  text: 'white',
-  textMuted: 'rgba(255,255,255,0.6)',
-} as const;
+/** Infographic color palette — theme-aware */
+export function getInfographicColors(isDark: boolean) {
+  return {
+    indigo: 'rgba(129,140,248,0.8)',
+    emerald: 'rgba(16,185,129,0.8)',
+    amber: 'rgba(251,191,36,0.9)',
+    muted: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.35)',
+    nodeFill: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(99,102,241,0.08)',
+    nodeStroke: 'rgba(129,140,248,0.5)',
+    text: isDark ? '#E2E8F0' : '#1E293B',
+    textMuted: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
+    textSubtle: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.3)',
+    lifeline: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)',
+    legendText: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.45)',
+    columnType: isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)',
+    columnFill: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(30,41,59,0.7)',
+    altRowFill: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(99,102,241,0.04)',
+    cardFill: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(99,102,241,0.06)',
+    headerFill: isDark ? 'rgba(99,102,241,0.25)' : 'rgba(99,102,241,0.12)',
+    selfColor: isDark ? 'rgba(200,200,255,0.6)' : 'rgba(99,102,241,0.5)',
+    indigoFill: isDark ? 'rgba(99,102,241,0.25)' : 'rgba(99,102,241,0.15)',
+    actorStroke: isDark ? 'rgba(129,140,248,0.45)' : 'rgba(99,102,241,0.5)',
+    msgText: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)',
+    selfText: isDark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+  } as const;
+}
+
+/** Legacy constant — kept for backward compatibility */
+export const INFOGRAPHIC_COLORS = getInfographicColors(true);

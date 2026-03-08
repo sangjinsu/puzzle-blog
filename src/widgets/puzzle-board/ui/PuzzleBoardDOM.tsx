@@ -33,7 +33,7 @@ export function PuzzleBoard({ board, setBoard, onBoardChange, disabled = false }
   return (
     <div
       ref={boardRef}
-      className="relative rounded-xl bg-slate-700/50 p-3 shadow-xl"
+      className="relative rounded-xl bg-slate-200/80 dark:bg-slate-700/50 p-3 shadow-xl"
       style={{
         width: boardWidth + 24,
         height: boardHeight + 24,

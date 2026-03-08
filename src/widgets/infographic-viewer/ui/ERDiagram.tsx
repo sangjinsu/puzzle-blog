@@ -1,7 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import type { ERTable, ERRelation } from '../model/types';
+import { getInfographicColors } from '../lib/svg-utils';
 
 interface ERDiagramProps {
   tables: ERTable[];
@@ -93,12 +95,15 @@ function LinkIcon() {
 }
 
 export function ERDiagram({ tables, relations }: ERDiagramProps) {
+  const { resolvedTheme } = useTheme();
+  const colors = getInfographicColors(resolvedTheme === 'dark');
+
   const totalW = tables.length * (TABLE_W + TABLE_GAP) - TABLE_GAP + 40;
   const maxTableH = Math.max(...tables.map(tableHeight));
   const svgH = maxTableH + 120;
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-muted p-4">
       <motion.svg
         viewBox={`0 0 ${totalW} ${svgH}`}
         className="w-full"
@@ -155,7 +160,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                   y={(y1 + y2) / 2 + 10}
                   textAnchor="middle"
                   fontSize={9}
-                  fill="rgba(255,255,255,0.5)"
+                  fill={colors.legendText}
                   fontFamily="system-ui, sans-serif"
                 >
                   {rel.label}
@@ -180,8 +185,8 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                 width={TABLE_W}
                 height={th}
                 rx={8}
-                fill="rgba(255,255,255,0.06)"
-                stroke="rgba(129,140,248,0.35)"
+                fill={colors.cardFill}
+                stroke={colors.actorStroke}
                 strokeWidth={1.5}
               />
               {/* Header */}
@@ -191,7 +196,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                 width={TABLE_W}
                 height={HEADER_H}
                 rx={8}
-                fill="rgba(99,102,241,0.25)"
+                fill={colors.headerFill}
               />
               {/* Header bottom rect to square off the bottom corners of header */}
               <rect
@@ -199,7 +204,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                 y={ty + HEADER_H - 8}
                 width={TABLE_W}
                 height={8}
-                fill="rgba(99,102,241,0.25)"
+                fill={colors.headerFill}
               />
               <text
                 x={tx + TABLE_W / 2}
@@ -207,7 +212,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize={13}
-                fill="white"
+                fill={colors.text}
                 fontFamily="system-ui, sans-serif"
                 fontWeight={700}
               >
@@ -219,7 +224,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                 const cy = ty + HEADER_H + 4 + cIdx * COL_H;
                 const isPK = col.pk === true;
                 const isFK = col.fk === true;
-                const fillColor = isPK ? EMERALD : isFK ? AMBER : 'rgba(255,255,255,0.7)';
+                const fillColor = isPK ? EMERALD : isFK ? AMBER : colors.columnFill;
 
                 return (
                   <g key={col.name}>
@@ -230,7 +235,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                         width={TABLE_W - 8}
                         height={COL_H}
                         rx={4}
-                        fill="rgba(255,255,255,0.03)"
+                        fill={colors.altRowFill}
                       />
                     )}
                     {/* Icon */}
@@ -258,7 +263,7 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
                       textAnchor="end"
                       dominantBaseline="middle"
                       fontSize={10}
-                      fill="rgba(255,255,255,0.4)"
+                      fill={colors.columnType}
                       fontFamily="'JetBrains Mono', monospace"
                     >
                       {col.type}
@@ -273,11 +278,11 @@ export function ERDiagram({ tables, relations }: ERDiagramProps) {
         {/* Legend */}
         <motion.g variants={itemVariants} transform={`translate(20, ${svgH - 28})`}>
           <circle cx={5} cy={5} r={4} fill={EMERALD} />
-          <text x={13} y={9} fontSize={9} fill="rgba(255,255,255,0.5)" fontFamily="system-ui">
+          <text x={13} y={9} fontSize={9} fill={colors.legendText} fontFamily="system-ui">
             PK
           </text>
           <circle cx={40} cy={5} r={4} fill={AMBER} />
-          <text x={48} y={9} fontSize={9} fill="rgba(255,255,255,0.5)" fontFamily="system-ui">
+          <text x={48} y={9} fontSize={9} fill={colors.legendText} fontFamily="system-ui">
             FK
           </text>
         </motion.g>

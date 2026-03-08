@@ -39,7 +39,7 @@ export default function Home() {
             <h3 className="font-semibold text-foreground">PLAY</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            로얄매치 스타일 3매치 데모를 직접 플레이하며 게임 메카닉을 체험합니다.
+            로얄매치 스타일 3매치 데모를 직접 플레이하며 게임 메커니즘을 체험합니다.
           </p>
         </GlassPanel>
 
@@ -74,7 +74,7 @@ export default function Home() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {contentItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <GlassPanel variant="subtle" className="flex items-center gap-4 p-4 transition-colors hover:bg-white/10">
+              <GlassPanel variant="subtle" className="flex items-center gap-4 p-4 transition-colors hover:bg-muted">
                 <MotionIcon icon={item.icon} className="h-5 w-5 shrink-0 text-primary" />
                 <div>
                   <span className="font-medium text-foreground">{item.label}</span>

@@ -1,11 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import type { FlowNode, FlowEdge } from '../model/types';
-
-const INDIGO = 'rgba(129,140,248,0.8)';
-const AMBER = 'rgba(251,191,36,0.9)';
-const EMERALD = 'rgba(16,185,129,0.9)';
+import { getInfographicColors } from '../lib/svg-utils';
 
 const NODE_W = 140;
 const NODE_H = 44;
@@ -47,6 +45,10 @@ function computeNodes(nodes: FlowNode[], svgWidth: number): ComputedNode[] {
   }));
 }
 
+const INDIGO = 'rgba(129,140,248,0.8)';
+const AMBER = 'rgba(251,191,36,0.9)';
+const EMERALD = 'rgba(16,185,129,0.9)';
+
 function nodeStroke(type: FlowNode['type']): string {
   switch (type) {
     case 'decision': return AMBER;
@@ -56,12 +58,10 @@ function nodeStroke(type: FlowNode['type']): string {
   }
 }
 
-function NodeShape({ node }: { node: ComputedNode }) {
+function NodeShape({ node, colors }: { node: ComputedNode; colors: ReturnType<typeof getInfographicColors> }) {
   const stroke = nodeStroke(node.type);
-  const fill = 'rgba(255,255,255,0.08)';
 
   if (node.type === 'start' || node.type === 'end') {
-    // Pill shape
     return (
       <g>
         <rect
@@ -71,7 +71,7 @@ function NodeShape({ node }: { node: ComputedNode }) {
           height={NODE_H}
           rx={NODE_H / 2}
           ry={NODE_H / 2}
-          fill={fill}
+          fill={colors.nodeFill}
           stroke={stroke}
           strokeWidth={1.8}
         />
@@ -81,7 +81,7 @@ function NodeShape({ node }: { node: ComputedNode }) {
           textAnchor="middle"
           dominantBaseline="middle"
           fontSize={12}
-          fill="white"
+          fill={colors.text}
           fontWeight={600}
           fontFamily="system-ui, sans-serif"
         >
@@ -92,7 +92,6 @@ function NodeShape({ node }: { node: ComputedNode }) {
   }
 
   if (node.type === 'decision') {
-    // Diamond: rotated square, half-diagonal = NODE_W/2
     const hw = NODE_W / 2;
     const hh = NODE_H / 2 + 8;
     const points = `${node.cx},${node.cy - hh} ${node.cx + hw},${node.cy} ${node.cx},${node.cy + hh} ${node.cx - hw},${node.cy}`;
@@ -100,7 +99,7 @@ function NodeShape({ node }: { node: ComputedNode }) {
       <g>
         <polygon
           points={points}
-          fill={fill}
+          fill={colors.nodeFill}
           stroke={stroke}
           strokeWidth={1.8}
         />
@@ -110,7 +109,7 @@ function NodeShape({ node }: { node: ComputedNode }) {
           textAnchor="middle"
           dominantBaseline="middle"
           fontSize={11}
-          fill="white"
+          fill={colors.text}
           fontWeight={500}
           fontFamily="system-ui, sans-serif"
         >
@@ -120,7 +119,6 @@ function NodeShape({ node }: { node: ComputedNode }) {
     );
   }
 
-  // Process: rounded rectangle
   return (
     <g>
       <rect
@@ -130,7 +128,7 @@ function NodeShape({ node }: { node: ComputedNode }) {
         height={NODE_H}
         rx={8}
         ry={8}
-        fill={fill}
+        fill={colors.nodeFill}
         stroke={stroke}
         strokeWidth={1.5}
       />
@@ -140,7 +138,7 @@ function NodeShape({ node }: { node: ComputedNode }) {
         textAnchor="middle"
         dominantBaseline="middle"
         fontSize={12}
-        fill="white"
+        fill={colors.text}
         fontWeight={500}
         fontFamily="system-ui, sans-serif"
       >
@@ -157,6 +155,9 @@ function edgePath(from: ComputedNode, to: ComputedNode): string {
 }
 
 export function FlowChart({ nodes, edges }: Props) {
+  const { resolvedTheme } = useTheme();
+  const colors = getInfographicColors(resolvedTheme === 'dark');
+
   const SVG_WIDTH = 360;
   const computed = computeNodes(nodes, SVG_WIDTH);
   const nodeMap: Record<string, ComputedNode> = {};
@@ -168,7 +169,7 @@ export function FlowChart({ nodes, edges }: Props) {
     : SVG_PADDING_Y * 2;
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-muted p-4">
       <motion.svg
         viewBox={`0 0 ${SVG_WIDTH} ${svgHeight}`}
         className="w-full max-w-sm mx-auto"
@@ -205,7 +206,7 @@ export function FlowChart({ nodes, edges }: Props) {
                   x={midX}
                   y={midY}
                   fontSize={10}
-                  fill="rgba(255,255,255,0.6)"
+                  fill={colors.textMuted}
                   fontFamily="monospace"
                 >
                   {edge.label}
@@ -218,7 +219,7 @@ export function FlowChart({ nodes, edges }: Props) {
         {/* Nodes */}
         {computed.map((node) => (
           <motion.g key={node.id} variants={itemVariants}>
-            <NodeShape node={node} />
+            <NodeShape node={node} colors={colors} />
           </motion.g>
         ))}
       </motion.svg>

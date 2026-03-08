@@ -1,4 +1,4 @@
-import type { ContentPageConfig } from '@/pages/content/model/types';
+import type { ContentPageConfig } from '@/views/content/model/types';
 import type { CodeSnippet } from '@/widgets/code-viewer';
 
 const codeSnippets: CodeSnippet[] = [

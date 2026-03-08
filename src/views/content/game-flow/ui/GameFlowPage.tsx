@@ -1,6 +1,6 @@
 'use client';
 
-import { ContentPageTemplate } from '@/pages/content/ui/ContentPageTemplate';
+import { ContentPageTemplate } from '@/views/content/ui/ContentPageTemplate';
 import { gameFlowConfig } from '../model/config';
 import { GameLoopDiagram } from '@/widgets/infographic-viewer/ui/GameLoopDiagram';
 import { SwapSequenceDiagram } from '@/widgets/infographic-viewer/ui/SwapSequenceDiagram';

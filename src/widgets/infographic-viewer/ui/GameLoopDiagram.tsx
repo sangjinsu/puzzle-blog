@@ -1,6 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
+import { getInfographicColors } from '../lib/svg-utils';
 
 const NODES = [
   { id: 'input', label: 'Player Input', x: 60, y: 60 },
@@ -61,7 +63,6 @@ const ARROWS: Arrow[] = [
   makeArrow('validate', 'detect', INDIGO),
   makeArrow('detect', 'generate', INDIGO),
   makeArrow('generate', 'remove', INDIGO),
-  // vertical: remove → gravity
   {
     id: 'remove-gravity',
     x1: cx(getNode('remove')),
@@ -71,7 +72,6 @@ const ARROWS: Arrow[] = [
     color: INDIGO,
   },
   makeArrow('gravity', 'cascades', INDIGO),
-  // cascade loop arrow: cascades → detect (goes up then left)
   {
     id: 'cascades-detect',
     x1: cx(getNode('cascades')),
@@ -82,7 +82,6 @@ const ARROWS: Arrow[] = [
     label: 'cascade',
     dashed: true,
   },
-  // cascades → score (no cascade)
   makeArrow('cascades', 'score', INDIGO, 'done'),
 ];
 
@@ -103,7 +102,6 @@ const arrowVariants = {
 
 function arrowPath(arrow: Arrow): string {
   const { x1, y1, x2, y2, id } = arrow;
-  // cascade loop: goes up then left with a curve
   if (id === 'cascades-detect') {
     const midY = Math.min(y1, y2) - 48;
     return `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
@@ -112,8 +110,11 @@ function arrowPath(arrow: Arrow): string {
 }
 
 export function GameLoopDiagram() {
+  const { resolvedTheme } = useTheme();
+  const colors = getInfographicColors(resolvedTheme === 'dark');
+
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-muted p-4">
       <motion.svg
         viewBox="0 0 840 310"
         className="w-full min-w-[600px]"
@@ -192,8 +193,8 @@ export function GameLoopDiagram() {
               height={NODE_H}
               rx={8}
               ry={8}
-              fill="rgba(255,255,255,0.08)"
-              stroke="rgba(129,140,248,0.5)"
+              fill={colors.nodeFill}
+              stroke={colors.nodeStroke}
               strokeWidth={1.5}
             />
             <text
@@ -202,7 +203,7 @@ export function GameLoopDiagram() {
               textAnchor="middle"
               dominantBaseline="middle"
               fontSize={12}
-              fill="white"
+              fill={colors.text}
               fontFamily="system-ui, sans-serif"
               fontWeight={500}
             >
@@ -214,7 +215,7 @@ export function GameLoopDiagram() {
         {/* Legend */}
         <motion.g variants={itemVariants}>
           <line x1={30} y1={290} x2={70} y2={290} stroke={INDIGO} strokeWidth={1.8} />
-          <text x={76} y={294} fontSize={10} fill="rgba(255,255,255,0.6)" fontFamily="system-ui">
+          <text x={76} y={294} fontSize={10} fill={colors.textMuted} fontFamily="system-ui">
             normal flow
           </text>
           <line
@@ -226,7 +227,7 @@ export function GameLoopDiagram() {
             strokeWidth={1.8}
             strokeDasharray="6 4"
           />
-          <text x={216} y={294} fontSize={10} fill="rgba(255,255,255,0.6)" fontFamily="system-ui">
+          <text x={216} y={294} fontSize={10} fill={colors.textMuted} fontFamily="system-ui">
             cascade loop
           </text>
         </motion.g>

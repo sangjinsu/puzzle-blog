@@ -34,7 +34,7 @@ const itemVariantsRight = {
 
 export function Timeline({ events }: TimelineProps) {
   return (
-    <div className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6">
+    <div className="w-full rounded-xl border border-border bg-muted p-6">
       <motion.div
         className="relative"
         variants={containerVariants}
@@ -43,13 +43,13 @@ export function Timeline({ events }: TimelineProps) {
       >
         {/* Center line — desktop only */}
         <div
-          className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-white/10 hidden md:block"
+          className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-border hidden md:block"
           aria-hidden
         />
 
         {/* Mobile left line */}
         <div
-          className="absolute left-5 top-0 bottom-0 w-px bg-white/10 md:hidden"
+          className="absolute left-5 top-0 bottom-0 w-px bg-border md:hidden"
           aria-hidden
         />
 
@@ -68,20 +68,20 @@ export function Timeline({ events }: TimelineProps) {
                 <div className="md:hidden flex items-start gap-4 pl-12">
                   {/* Dot — mobile */}
                   <span
-                    className="absolute left-[14px] top-2 w-3 h-3 rounded-full ring-2 ring-white/10 flex-shrink-0"
+                    className="absolute left-[14px] top-2 w-3 h-3 rounded-full ring-2 ring-border flex-shrink-0"
                     style={{ backgroundColor: dotColor }}
                     aria-hidden
                   />
-                  <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 w-full">
+                  <div className="rounded-xl border border-border bg-card p-4 w-full">
                     <p
                       className="text-xs font-mono font-semibold mb-1"
                       style={{ color: dotColor }}
                     >
                       {event.time}
                     </p>
-                    <p className="text-sm font-semibold text-white">{event.label}</p>
+                    <p className="text-sm font-semibold text-foreground">{event.label}</p>
                     {event.description && (
-                      <p className="text-xs text-white/50 mt-1">{event.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
                     )}
                   </div>
                 </div>
@@ -91,16 +91,16 @@ export function Timeline({ events }: TimelineProps) {
                   {/* Left side content */}
                   <div className="flex-1 flex justify-end pr-8">
                     {isLeft && (
-                      <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 max-w-xs w-full text-right">
+                      <div className="rounded-xl border border-border bg-card p-4 max-w-xs w-full text-right">
                         <p
                           className="text-xs font-mono font-semibold mb-1"
                           style={{ color: dotColor }}
                         >
                           {event.time}
                         </p>
-                        <p className="text-sm font-semibold text-white">{event.label}</p>
+                        <p className="text-sm font-semibold text-foreground">{event.label}</p>
                         {event.description && (
-                          <p className="text-xs text-white/50 mt-1">{event.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
                         )}
                       </div>
                     )}
@@ -108,7 +108,7 @@ export function Timeline({ events }: TimelineProps) {
 
                   {/* Center dot */}
                   <span
-                    className="w-4 h-4 rounded-full ring-2 ring-white/10 flex-shrink-0 z-10"
+                    className="w-4 h-4 rounded-full ring-2 ring-border flex-shrink-0 z-10"
                     style={{ backgroundColor: dotColor }}
                     aria-hidden
                   />
@@ -116,16 +116,16 @@ export function Timeline({ events }: TimelineProps) {
                   {/* Right side content */}
                   <div className="flex-1 pl-8">
                     {!isLeft && (
-                      <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 max-w-xs w-full">
+                      <div className="rounded-xl border border-border bg-card p-4 max-w-xs w-full">
                         <p
                           className="text-xs font-mono font-semibold mb-1"
                           style={{ color: dotColor }}
                         >
                           {event.time}
                         </p>
-                        <p className="text-sm font-semibold text-white">{event.label}</p>
+                        <p className="text-sm font-semibold text-foreground">{event.label}</p>
                         {event.description && (
-                          <p className="text-xs text-white/50 mt-1">{event.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{event.description}</p>
                         )}
                       </div>
                     )}

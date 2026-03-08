@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
+import { getInfographicColors } from '../lib/svg-utils';
 
-// Lifeline x positions
 const ACTORS = [
   { id: 'client', label: 'Client', x: 100 },
   { id: 'server', label: 'Game Server', x: 350 },
@@ -28,7 +29,6 @@ interface Message {
 
 const INDIGO = 'rgba(129,140,248,0.9)';
 const EMERALD = 'rgba(16,185,129,0.9)';
-const SELF_COLOR = 'rgba(200,200,255,0.6)';
 
 const MESSAGES: Message[] = [
   {
@@ -104,7 +104,7 @@ const arrowVariants = {
   },
 };
 
-function MessageArrow({ msg }: { msg: Message }) {
+function MessageArrow({ msg, colors }: { msg: Message; colors: ReturnType<typeof getInfographicColors> }) {
   if (msg.isSelf) {
     const serverX = getActor('server').x;
     const loopW = 50;
@@ -114,7 +114,7 @@ function MessageArrow({ msg }: { msg: Message }) {
       <motion.g variants={arrowVariants} style={{ originX: `${serverX}px` }}>
         <path
           d={`M ${serverX} ${top} Q ${serverX + loopW + 20} ${top}, ${serverX + loopW} ${msg.y} Q ${serverX + loopW + 20} ${msg.y + loopH}, ${serverX} ${msg.y + loopH / 2}`}
-          stroke={SELF_COLOR}
+          stroke={colors.selfColor}
           strokeWidth={1.5}
           fill="none"
           markerEnd="url(#arrow-self)"
@@ -123,7 +123,7 @@ function MessageArrow({ msg }: { msg: Message }) {
           x={serverX + loopW + 26}
           y={msg.y + 4}
           fontSize={11}
-          fill="rgba(255,255,255,0.7)"
+          fill={colors.selfText}
           fontFamily="'JetBrains Mono', monospace"
         >
           {msg.label}
@@ -136,7 +136,6 @@ function MessageArrow({ msg }: { msg: Message }) {
   const toX = getActor(msg.to).x;
   const color = msg.isResponse ? EMERALD : INDIGO;
   const markerId = msg.isResponse ? 'arrow-emerald' : 'arrow-indigo';
-  // dashed for response
   const dash = msg.isResponse ? '6 3' : undefined;
 
   return (
@@ -156,7 +155,7 @@ function MessageArrow({ msg }: { msg: Message }) {
         y={msg.y - 8}
         textAnchor="middle"
         fontSize={11}
-        fill="rgba(255,255,255,0.8)"
+        fill={colors.msgText}
         fontFamily="'JetBrains Mono', monospace"
       >
         {msg.label}
@@ -166,8 +165,11 @@ function MessageArrow({ msg }: { msg: Message }) {
 }
 
 export function SwapSequenceDiagram() {
+  const { resolvedTheme } = useTheme();
+  const colors = getInfographicColors(resolvedTheme === 'dark');
+
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-muted p-4">
       <motion.svg
         viewBox="0 0 700 510"
         className="w-full min-w-[560px]"
@@ -205,7 +207,7 @@ export function SwapSequenceDiagram() {
             refY="3"
             orient="auto"
           >
-            <path d="M0,0 L0,6 L8,3 z" fill={SELF_COLOR} />
+            <path d="M0,0 L0,6 L8,3 z" fill={colors.selfColor} />
           </marker>
         </defs>
 
@@ -217,7 +219,7 @@ export function SwapSequenceDiagram() {
             y1={LIFELINE_TOP}
             x2={actor.x}
             y2={LIFELINE_BOTTOM}
-            stroke="rgba(255,255,255,0.15)"
+            stroke={colors.lifeline}
             strokeWidth={1.5}
             strokeDasharray="4 4"
             variants={fadeIn}
@@ -234,8 +236,8 @@ export function SwapSequenceDiagram() {
               height={ACTOR_BOX_H}
               rx={8}
               ry={8}
-              fill="rgba(255,255,255,0.08)"
-              stroke="rgba(129,140,248,0.45)"
+              fill={colors.nodeFill}
+              stroke={colors.actorStroke}
               strokeWidth={1.5}
             />
             <text
@@ -244,7 +246,7 @@ export function SwapSequenceDiagram() {
               textAnchor="middle"
               dominantBaseline="middle"
               fontSize={13}
-              fill="white"
+              fill={colors.text}
               fontWeight={600}
               fontFamily="system-ui, sans-serif"
             >
@@ -255,7 +257,7 @@ export function SwapSequenceDiagram() {
 
         {/* Messages */}
         {MESSAGES.map((msg) => (
-          <MessageArrow key={msg.id} msg={msg} />
+          <MessageArrow key={msg.id} msg={msg} colors={colors} />
         ))}
 
         {/* Step numbers */}
@@ -269,7 +271,7 @@ export function SwapSequenceDiagram() {
               x={labelX}
               y={msg.y + 18}
               fontSize={9}
-              fill="rgba(255,255,255,0.35)"
+              fill={colors.textSubtle}
               fontFamily="system-ui"
               variants={fadeIn}
             >

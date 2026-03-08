@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PanelLeftClose, PanelLeft, Puzzle } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { PanelLeftClose, PanelLeft, Puzzle, Sun, Moon } from 'lucide-react';
 import { NAV_ITEMS } from '@/shared/config/navigation';
 import { MotionIcon } from '@/shared/ui/motion-icon';
 import { cn } from '@/shared/lib/utils';
@@ -11,7 +12,11 @@ import { cn } from '@/shared/lib/utils';
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { resolvedTheme, setTheme } = useTheme();
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <>
@@ -35,19 +40,36 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-50 flex h-full flex-col glass-strong shadow-2xl transition-all duration-300',
+          'fixed left-0 top-0 z-50 flex h-full flex-col bg-background border-r border-border shadow-sm transition-all duration-300',
           collapsed ? 'w-16' : 'w-60',
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
       >
-        {/* Logo */}
-        <div className="flex h-16 items-center gap-3 border-b border-white/10 px-4">
+        {/* Logo + Collapse toggle */}
+        <div className={cn(
+          'border-b border-border',
+          collapsed ? 'flex flex-col items-center gap-2 py-3 px-2' : 'flex h-16 items-center gap-3 px-4'
+        )}>
           <Puzzle className="h-6 w-6 shrink-0 text-primary" />
           {!collapsed && (
             <span className="text-sm font-bold text-foreground truncate">
               Puzzle Content Lab
             </span>
           )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn(
+              'hidden items-center justify-center rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors md:flex',
+              !collapsed && 'ml-auto'
+            )}
+            aria-label={collapsed ? '사이드바 펼치기' : '사이드바 접기'}
+          >
+            {collapsed ? (
+              <PanelLeft className="h-4 w-4" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4" />
+            )}
+          </button>
         </div>
 
         {/* Nav items */}
@@ -66,7 +88,7 @@ export function Sidebar() {
                       'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
                       isActive
                         ? 'bg-primary/20 text-primary font-semibold'
-                        : 'text-muted-foreground hover:bg-white/8 hover:text-foreground'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     )}
                     title={collapsed ? item.label : undefined}
                   >
@@ -79,17 +101,23 @@ export function Sidebar() {
           </ul>
         </nav>
 
-        {/* Collapse toggle (desktop only) */}
-        <div className="hidden border-t border-white/10 p-2 md:block">
+        {/* Theme toggle */}
+        <div className="border-t border-border p-2">
           <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="flex w-full items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-white/8 hover:text-foreground transition-colors"
-            aria-label={collapsed ? '사이드바 펼치기' : '사이드바 접기'}
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            className={cn(
+              'flex w-full items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors',
+              !collapsed && 'gap-3 justify-start px-3'
+            )}
+            aria-label={mounted && resolvedTheme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
           >
-            {collapsed ? (
-              <PanelLeft className="h-5 w-5" />
+            {mounted && resolvedTheme === 'dark' ? (
+              <Sun className="h-5 w-5 shrink-0" />
             ) : (
-              <PanelLeftClose className="h-5 w-5" />
+              <Moon className="h-5 w-5 shrink-0" />
+            )}
+            {!collapsed && (
+              <span className="text-sm">{mounted && resolvedTheme === 'dark' ? '라이트 모드' : '다크 모드'}</span>
             )}
           </button>
         </div>

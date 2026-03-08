@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { codeToHtml } from 'shiki';
 import { Copy, Check } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
@@ -16,13 +17,17 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
   const [html, setHtml] = useState<string>('');
   const [copied, setCopied] = useState(false);
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { resolvedTheme } = useTheme();
+
+  const shikiTheme = resolvedTheme === 'dark' ? 'github-dark' : 'github-light';
+  const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
     let cancelled = false;
 
     codeToHtml(code, {
       lang: language,
-      theme: 'github-dark',
+      theme: shikiTheme,
     }).then((result) => {
       if (!cancelled) setHtml(result);
     });
@@ -30,7 +35,7 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
     return () => {
       cancelled = true;
     };
-  }, [code, language]);
+  }, [code, language, shikiTheme]);
 
   function handleCopy() {
     navigator.clipboard.writeText(code).then(() => {
@@ -46,7 +51,7 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
   return (
     <div
       className={cn(
-        'relative rounded-lg overflow-hidden glass-subtle border border-white/10',
+        'relative rounded-lg overflow-hidden glass-subtle border border-border',
         className
       )}
     >
@@ -57,7 +62,7 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
         className={cn(
           'absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-md px-2 py-1',
           'text-xs font-medium transition-colors',
-          'bg-white/10 hover:bg-white/20 text-muted-foreground hover:text-foreground'
+          'bg-muted hover:bg-slate-200 dark:hover:bg-slate-700 text-muted-foreground hover:text-foreground'
         )}
       >
         {copied ? (
@@ -74,7 +79,7 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
           className="overflow-x-auto text-sm [&>pre]:p-4 [&>pre]:m-0 [&>pre]:bg-transparent! font-mono"
           // shiki generates safe, sanitized HTML
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: addLineNumbers(html) }}
+          dangerouslySetInnerHTML={{ __html: addLineNumbers(html, isDark) }}
         />
       ) : (
         /* Fallback with line numbers while shiki loads */
@@ -82,7 +87,7 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
           <code>
             {lines.map((line, i) => (
               <div key={i} className="flex">
-                <span className="mr-4 w-6 shrink-0 select-none text-right text-white/30">
+                <span className="mr-4 w-6 shrink-0 select-none text-right text-slate-400">
                   {i + 1}
                 </span>
                 <span>{line}</span>
@@ -100,10 +105,11 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
  * shiki wraps each line in a <span class="line">...</span> — we prepend
  * a line-number element to each of those spans.
  */
-function addLineNumbers(html: string): string {
+function addLineNumbers(html: string, isDark: boolean): string {
   let lineIndex = 0;
+  const lineNumColor = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)';
   return html.replace(/<span class="line">/g, () => {
     lineIndex += 1;
-    return `<span class="line" style="display:flex"><span style="min-width:2rem;padding-right:1rem;text-align:right;color:rgba(255,255,255,0.25);user-select:none;flex-shrink:0">${lineIndex}</span>`;
+    return `<span class="line" style="display:flex"><span style="min-width:2rem;padding-right:1rem;text-align:right;color:${lineNumColor};user-select:none;flex-shrink:0">${lineIndex}</span>`;
   });
 }

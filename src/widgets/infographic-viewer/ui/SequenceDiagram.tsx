@@ -1,11 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import type { SequenceActor, SequenceMessage } from '../model/types';
+import { getInfographicColors } from '../lib/svg-utils';
 
 const INDIGO = 'rgba(129,140,248,0.9)';
 const EMERALD = 'rgba(16,185,129,0.9)';
-const SELF_COLOR = 'rgba(200,200,255,0.6)';
 
 const LIFELINE_TOP = 80;
 const ACTOR_BOX_W = 120;
@@ -67,7 +68,7 @@ function computeLayout(actors: SequenceActor[], messages: SequenceMessage[], svg
   return { actorXMap, computed, lifelineBottom, svgHeight };
 }
 
-function MessageArrow({ msg }: { msg: ComputedMessage }) {
+function MessageArrow({ msg, colors }: { msg: ComputedMessage; colors: ReturnType<typeof getInfographicColors> }) {
   if (msg.isSelf) {
     const ax = msg._fromX;
     const top = msg._y - SELF_LOOP_H / 2;
@@ -76,7 +77,7 @@ function MessageArrow({ msg }: { msg: ComputedMessage }) {
       <motion.g variants={arrowVariants} style={{ originX: `${ax}px` }}>
         <path
           d={`M ${ax} ${top} Q ${ax + SELF_LOOP_W + 20} ${top}, ${ax + SELF_LOOP_W} ${msg._y} Q ${ax + SELF_LOOP_W + 20} ${bottom}, ${ax} ${bottom}`}
-          stroke={SELF_COLOR}
+          stroke={colors.selfColor}
           strokeWidth={1.5}
           fill="none"
           markerEnd="url(#seq-arrow-self)"
@@ -85,7 +86,7 @@ function MessageArrow({ msg }: { msg: ComputedMessage }) {
           x={ax + SELF_LOOP_W + 26}
           y={msg._y + 4}
           fontSize={11}
-          fill="rgba(255,255,255,0.7)"
+          fill={colors.selfText}
           fontFamily="'JetBrains Mono', monospace"
         >
           {msg.label}
@@ -116,7 +117,7 @@ function MessageArrow({ msg }: { msg: ComputedMessage }) {
         y={msg._y - 8}
         textAnchor="middle"
         fontSize={11}
-        fill="rgba(255,255,255,0.8)"
+        fill={colors.msgText}
         fontFamily="'JetBrains Mono', monospace"
       >
         {msg.label}
@@ -126,11 +127,14 @@ function MessageArrow({ msg }: { msg: ComputedMessage }) {
 }
 
 export function SequenceDiagram({ actors, messages }: Props) {
+  const { resolvedTheme } = useTheme();
+  const colors = getInfographicColors(resolvedTheme === 'dark');
+
   const SVG_WIDTH = 700;
   const { actorXMap, computed, lifelineBottom, svgHeight } = computeLayout(actors, messages, SVG_WIDTH);
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4">
+    <div className="w-full overflow-x-auto rounded-xl border border-border bg-muted p-4">
       <motion.svg
         viewBox={`0 0 ${SVG_WIDTH} ${svgHeight}`}
         className="w-full min-w-[560px]"
@@ -147,7 +151,7 @@ export function SequenceDiagram({ actors, messages }: Props) {
             <path d="M0,0 L0,6 L8,3 z" fill={EMERALD} />
           </marker>
           <marker id="seq-arrow-self" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill={SELF_COLOR} />
+            <path d="M0,0 L0,6 L8,3 z" fill={colors.selfColor} />
           </marker>
         </defs>
 
@@ -161,7 +165,7 @@ export function SequenceDiagram({ actors, messages }: Props) {
               y1={LIFELINE_TOP}
               x2={ax}
               y2={lifelineBottom}
-              stroke="rgba(255,255,255,0.15)"
+              stroke={colors.lifeline}
               strokeWidth={1.5}
               strokeDasharray="4 4"
               variants={fadeIn}
@@ -181,8 +185,8 @@ export function SequenceDiagram({ actors, messages }: Props) {
                 height={ACTOR_BOX_H}
                 rx={8}
                 ry={8}
-                fill="rgba(255,255,255,0.08)"
-                stroke="rgba(129,140,248,0.45)"
+                fill={colors.nodeFill}
+                stroke={colors.actorStroke}
                 strokeWidth={1.5}
               />
               <text
@@ -191,7 +195,7 @@ export function SequenceDiagram({ actors, messages }: Props) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize={13}
-                fill="white"
+                fill={colors.text}
                 fontWeight={600}
                 fontFamily="system-ui, sans-serif"
               >
@@ -203,7 +207,7 @@ export function SequenceDiagram({ actors, messages }: Props) {
 
         {/* Messages */}
         {computed.map((msg, i) => (
-          <MessageArrow key={`msg-${i}`} msg={msg} />
+          <MessageArrow key={`msg-${i}`} msg={msg} colors={colors} />
         ))}
 
         {/* Step numbers */}
@@ -217,7 +221,7 @@ export function SequenceDiagram({ actors, messages }: Props) {
                 x={labelX}
                 y={msg._y + 18}
                 fontSize={9}
-                fill="rgba(255,255,255,0.35)"
+                fill={colors.textSubtle}
                 fontFamily="system-ui"
                 variants={fadeIn}
               >

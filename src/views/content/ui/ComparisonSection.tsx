@@ -14,7 +14,7 @@ export function ComparisonSection({ features, games }: ComparisonSectionProps) {
       <GlassPanel className="overflow-x-auto p-1">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-white/10">
+            <tr className="border-b border-border">
               <th className="px-4 py-3 text-left text-muted-foreground font-medium">기능</th>
               {games.map((game) => (
                 <th key={game.name} className="px-4 py-3 text-center text-foreground font-semibold">
@@ -25,7 +25,7 @@ export function ComparisonSection({ features, games }: ComparisonSectionProps) {
           </thead>
           <tbody>
             {features.map((feature) => (
-              <tr key={feature} className="border-b border-white/5">
+              <tr key={feature} className="border-b border-slate-100 dark:border-white/5">
                 <td className="px-4 py-3 text-muted-foreground">{feature}</td>
                 {games.map((game) => {
                   const value = game.features[feature];
