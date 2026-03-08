@@ -1,19 +1,12 @@
-import type { Board, Tile, MatchResult, Position } from '@/entities/tile';
+import type { Board, Tile, MatchResult, Position, GameState, ProcessResult, BoardStep } from '@/entities/tile';
 import { createBoard, cloneBoard } from '@/entities/tile';
 import { detectMatches } from '@/features/match-detection';
 import { applyGravity, removeTiles } from '@/features/gravity';
 import { generateItem, activateItem } from '@/features/item-generation';
 
-export interface GameState {
-  board: Board;
-  selected: Position | null;
-  animating: boolean;
-  lastMatches: MatchResult[];
-  lastRemoved: Tile[];
-  score: number;
-}
+export type { GameState, ProcessResult, BoardStep };
 
-export function createInitialGameState(rows = 9, cols = 9): GameState {
+export function createInitialGameState(rows = 7, cols = 7): GameState {
   return {
     board: createBoard(rows, cols),
     selected: null,
@@ -41,20 +34,6 @@ export function swapTiles(board: Board, a: Position, b: Position): Board {
   newBoard[b.row]![b.col] = { ...tileA, row: b.row, col: b.col };
 
   return newBoard;
-}
-
-export interface ProcessResult {
-  board: Board;
-  allRemoved: Tile[];
-  matchResults: MatchResult[];
-  steps: BoardStep[];
-}
-
-export interface BoardStep {
-  type: 'swap' | 'match' | 'item_activate' | 'gravity' | 'cascade';
-  board: Board;
-  removed?: Tile[];
-  matches?: MatchResult[];
 }
 
 export function processSwap(
@@ -87,6 +66,13 @@ export function processSwap(
     currentBoard = afterItem;
     allRemoved.push(...removedTiles);
     steps.push({ type: 'item_activate', board: currentBoard, removed: removedTiles });
+  }
+
+  // Apply gravity after item activation so destroyed tiles get refilled
+  if (allRemoved.length > 0) {
+    const { board: afterGravity } = applyGravity(currentBoard);
+    currentBoard = afterGravity;
+    steps.push({ type: 'gravity', board: currentBoard });
   }
 
   // Check initial matches

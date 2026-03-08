@@ -1,6 +1,6 @@
-export const GRID_ROWS = 9;
-export const GRID_COLS = 9;
-export const TILE_COLORS = ['red', 'blue', 'green', 'yellow', 'purple'] as const;
+export const GRID_ROWS = 7;
+export const GRID_COLS = 7;
+export const TILE_COLORS = ['red', 'blue', 'green', 'yellow', 'orange'] as const;
 export const TILE_SIZE = 48;
 export const TILE_GAP = 4;
 
@@ -32,5 +32,5 @@ export const TILE_3D_COLORS: Record<string, string> = {
   blue: '#3B82F6',
   green: '#10B981',
   yellow: '#F59E0B',
-  purple: '#8B5CF6',
+  orange: '#F97316',
 } as const;

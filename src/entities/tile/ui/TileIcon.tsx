@@ -7,7 +7,7 @@ const COLOR_MAP: Record<TileColor, { bg: string; border: string; icon: string }>
   blue: { bg: 'bg-blue-400', border: 'border-blue-500', icon: '🔵' },
   green: { bg: 'bg-emerald-400', border: 'border-emerald-500', icon: '🟢' },
   yellow: { bg: 'bg-amber-400', border: 'border-amber-500', icon: '🟡' },
-  purple: { bg: 'bg-purple-400', border: 'border-purple-500', icon: '🟣' },
+  orange: { bg: 'bg-orange-400', border: 'border-orange-500', icon: '🟠' },
 };
 
 const ITEM_ICON: Record<TileType, string> = {

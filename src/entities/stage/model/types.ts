@@ -17,5 +17,5 @@ export interface StageState {
   stage: Stage;
   movesLeft: number;
   objectives: Objective[];
-  status: 'playing' | 'cleared' | 'failed';
+  status: 'ready' | 'playing' | 'continue_prompt' | 'cleared' | 'failed';
 }

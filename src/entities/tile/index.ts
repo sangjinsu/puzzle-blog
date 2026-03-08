@@ -6,6 +6,9 @@ export type {
   Position,
   MatchPattern,
   MatchResult,
+  GameState,
+  ProcessResult,
+  BoardStep,
 } from './model/types';
 
 export {

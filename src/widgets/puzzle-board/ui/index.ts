@@ -1,2 +1,3 @@
 export { PuzzleBoard } from './PuzzleBoardDOM';
-export { PuzzleBoard3D } from './PuzzleBoard3D';
+export { DemoContainer } from './DemoContainer';
+// PuzzleBoard3D should be imported dynamically where needed

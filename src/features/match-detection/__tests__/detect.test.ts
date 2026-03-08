@@ -15,15 +15,13 @@ function makeBoard(colors: string[][]): Board {
 describe('detectMatches', () => {
   test('detects horizontal 3-match', () => {
     const board = makeBoard([
-      ['red', 'red', 'red', 'blue', 'green', 'yellow', 'purple', 'blue', 'green'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
+      ['red', 'red', 'red', 'blue', 'green', 'yellow', 'orange'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['yellow', 'orange', 'red', 'blue', 'green', 'yellow', 'orange'],
+      ['orange', 'red', 'blue', 'green', 'yellow', 'orange', 'red'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
     ]);
 
     const matches = detectMatches(board);
@@ -34,15 +32,13 @@ describe('detectMatches', () => {
 
   test('detects vertical 3-match', () => {
     const board = makeBoard([
-      ['red', 'blue', 'green', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple'],
-      ['red', 'green', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['blue', 'purple', 'red', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
-      ['green', 'red', 'blue', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['yellow', 'blue', 'green', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['purple', 'green', 'yellow', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['blue', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['green', 'purple', 'red', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'blue', 'green'],
+      ['red', 'green', 'yellow', 'orange', 'blue', 'green', 'yellow'],
+      ['red', 'yellow', 'orange', 'blue', 'green', 'yellow', 'orange'],
+      ['blue', 'orange', 'red', 'green', 'yellow', 'orange', 'red'],
+      ['green', 'red', 'blue', 'yellow', 'orange', 'red', 'blue'],
+      ['yellow', 'blue', 'green', 'orange', 'red', 'blue', 'green'],
+      ['orange', 'green', 'yellow', 'red', 'blue', 'green', 'yellow'],
     ]);
 
     const matches = detectMatches(board);
@@ -54,15 +50,13 @@ describe('detectMatches', () => {
 
   test('detects horizontal 4-match and generates rocket_v', () => {
     const board = makeBoard([
-      ['red', 'red', 'red', 'red', 'green', 'yellow', 'purple', 'blue', 'green'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
+      ['red', 'red', 'red', 'red', 'green', 'yellow', 'orange'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['yellow', 'orange', 'red', 'blue', 'green', 'yellow', 'orange'],
+      ['orange', 'red', 'blue', 'green', 'yellow', 'orange', 'red'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
     ]);
 
     const matches = detectMatches(board);
@@ -74,15 +68,13 @@ describe('detectMatches', () => {
 
   test('detects vertical 4-match and generates rocket_h', () => {
     const board = makeBoard([
-      ['red', 'blue', 'green', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple'],
-      ['red', 'green', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['red', 'purple', 'red', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
-      ['green', 'red', 'blue', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['yellow', 'blue', 'green', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['purple', 'green', 'yellow', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['blue', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['green', 'purple', 'red', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'blue', 'green'],
+      ['red', 'green', 'yellow', 'orange', 'blue', 'green', 'yellow'],
+      ['red', 'yellow', 'orange', 'blue', 'green', 'yellow', 'orange'],
+      ['red', 'orange', 'red', 'green', 'yellow', 'orange', 'red'],
+      ['green', 'red', 'blue', 'yellow', 'orange', 'red', 'blue'],
+      ['yellow', 'blue', 'green', 'orange', 'red', 'blue', 'green'],
+      ['orange', 'green', 'yellow', 'red', 'blue', 'green', 'yellow'],
     ]);
 
     const matches = detectMatches(board);
@@ -94,15 +86,13 @@ describe('detectMatches', () => {
 
   test('detects 2x2 square match and generates bomb', () => {
     const board = makeBoard([
-      ['red', 'red', 'green', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple'],
-      ['red', 'red', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['green', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['yellow', 'purple', 'red', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
-      ['purple', 'red', 'blue', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
+      ['red', 'red', 'green', 'yellow', 'orange', 'blue', 'green'],
+      ['red', 'red', 'yellow', 'orange', 'blue', 'green', 'yellow'],
+      ['green', 'yellow', 'orange', 'blue', 'green', 'yellow', 'orange'],
+      ['yellow', 'orange', 'red', 'green', 'yellow', 'orange', 'red'],
+      ['orange', 'red', 'blue', 'yellow', 'orange', 'red', 'blue'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
     ]);
 
     const matches = detectMatches(board);
@@ -113,15 +103,13 @@ describe('detectMatches', () => {
 
   test('returns empty array for no matches', () => {
     const board = makeBoard([
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
     ]);
 
     const matches = detectMatches(board);
@@ -130,28 +118,24 @@ describe('detectMatches', () => {
 
   test('hasAnyMatch returns correct boolean', () => {
     const noMatchBoard = makeBoard([
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
     ]);
     expect(hasAnyMatch(noMatchBoard)).toBe(false);
 
     const matchBoard = makeBoard([
-      ['red', 'red', 'red', 'yellow', 'purple', 'blue', 'green', 'yellow', 'purple'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
-      ['purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green'],
-      ['red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow'],
-      ['blue', 'green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple'],
-      ['green', 'yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red'],
-      ['yellow', 'purple', 'red', 'blue', 'green', 'yellow', 'purple', 'red', 'blue'],
+      ['red', 'red', 'red', 'yellow', 'orange', 'blue', 'green'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
+      ['green', 'yellow', 'orange', 'red', 'blue', 'green', 'yellow'],
+      ['yellow', 'orange', 'red', 'blue', 'green', 'yellow', 'orange'],
+      ['orange', 'red', 'blue', 'green', 'yellow', 'orange', 'red'],
+      ['red', 'blue', 'green', 'yellow', 'orange', 'red', 'blue'],
+      ['blue', 'green', 'yellow', 'orange', 'red', 'blue', 'green'],
     ]);
     expect(hasAnyMatch(matchBoard)).toBe(true);
   });

@@ -1,5 +1,13 @@
 import type { Metadata } from 'next';
+import { JetBrains_Mono } from 'next/font/google';
+import { Sidebar } from '@/widgets/sidebar';
 import './globals.css';
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Puzzle Content Lab',
@@ -12,9 +20,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
-      <body className="bg-slate-50 text-slate-800 antialiased">
-        {children}
+    <html lang="ko" className={jetbrainsMono.variable}>
+      <head>
+        <link
+          rel="stylesheet"
+          as="style"
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
+      <body className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-foreground antialiased font-sans">
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 min-w-0">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );

@@ -6,8 +6,12 @@ export function initStageState(stage: Stage): StageState {
     stage,
     movesLeft: stage.moves,
     objectives: stage.objectives.map((o) => ({ ...o, current: 0 })),
-    status: 'playing',
+    status: 'ready',
   };
+}
+
+export function startGame(state: StageState): StageState {
+  return { ...state, status: 'playing' };
 }
 
 export function useMoveAndTrack(state: StageState, removedTiles: Tile[]): StageState {
@@ -35,10 +39,18 @@ export function useMoveAndTrack(state: StageState, removedTiles: Tile[]): StageS
   }
 
   if (movesLeft <= 0) {
-    return { ...state, objectives, movesLeft: 0, status: 'failed' };
+    return { ...state, objectives, movesLeft: 0, status: 'continue_prompt' };
   }
 
   return { ...state, objectives, movesLeft };
+}
+
+export function continueGame(state: StageState): StageState {
+  return { ...state, movesLeft: state.stage.moves, status: 'playing' };
+}
+
+export function declineContinue(state: StageState): StageState {
+  return { ...state, status: 'failed' };
 }
 
 export function isObjectiveComplete(obj: Objective): boolean {

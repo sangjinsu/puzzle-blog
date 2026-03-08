@@ -1,4 +1,9 @@
-export { PuzzleBoard } from './ui';
-export { PuzzleBoard3D } from './ui';
-export { createInitialGameState, processSwap, isAdjacent, swapTiles } from './model';
-export type { GameState, ProcessResult, BoardStep } from './model';
+export { PuzzleBoard } from './ui/PuzzleBoardDOM';
+export { DemoContainer } from './ui/DemoContainer';
+export {
+  createInitialGameState,
+  isAdjacent,
+  swapTiles,
+  processSwap,
+} from './model/game-engine';
+export type { GameState, ProcessResult, BoardStep } from './model/game-engine';

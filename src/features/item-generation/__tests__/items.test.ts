@@ -7,7 +7,7 @@ function makeTile(row: number, col: number, color: string, type: string = 'norma
 }
 
 function makeFullBoard(rows: number, cols: number): Board {
-  const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+  const colors: string[] = ['red', 'blue', 'green', 'yellow', 'orange'];
   return Array.from({ length: rows }, (_, r) =>
     Array.from({ length: cols }, (_, c) =>
       makeTile(r, c, colors[(r + c) % colors.length]!)

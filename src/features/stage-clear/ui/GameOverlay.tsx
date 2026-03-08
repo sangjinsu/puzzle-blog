@@ -5,16 +5,15 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 
 interface GameOverlayProps {
-  status: 'playing' | 'cleared' | 'failed';
+  status: 'ready' | 'playing' | 'continue_prompt' | 'cleared' | 'failed';
+  onStart?: () => void;
   onRestart: () => void;
-  onNextStage?: () => void;
-  onStageSelect: () => void;
+  onContinue?: () => void;
+  onDecline?: () => void;
 }
 
-export function GameOverlay({ status, onRestart, onNextStage, onStageSelect }: GameOverlayProps) {
+export function GameOverlay({ status, onStart, onRestart, onContinue, onDecline }: GameOverlayProps) {
   if (status === 'playing') return null;
-
-  const isCleared = status === 'cleared';
 
   return (
     <AnimatePresence>
@@ -30,28 +29,67 @@ export function GameOverlay({ status, onRestart, onNextStage, onStageSelect }: G
           transition={{ type: 'spring', bounce: 0.4 }}
         >
           <Card className="flex flex-col items-center gap-4 p-8">
-            <span className="text-5xl">{isCleared ? '🎉' : '😢'}</span>
-            <h2 className="text-2xl font-bold text-foreground">
-              {isCleared ? '스테이지 클리어!' : '실패...'}
-            </h2>
-            <p className="text-muted-foreground">
-              {isCleared
-                ? '축하합니다! 모든 목표를 달성했습니다.'
-                : '이동 횟수를 모두 사용했습니다.'}
-            </p>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={onRestart}>
-                다시 시도
-              </Button>
-              {isCleared && onNextStage && (
-                <Button onClick={onNextStage}>
-                  다음 스테이지
+            {status === 'ready' && (
+              <>
+                <span className="text-5xl">🧩</span>
+                <h2 className="text-2xl font-bold text-foreground">
+                  준비 완료!
+                </h2>
+                <p className="text-muted-foreground">
+                  목표를 달성하여 스테이지를 클리어하세요.
+                </p>
+                <Button onClick={onStart}>
+                  게임 시작
                 </Button>
-              )}
-              <Button variant="secondary" onClick={onStageSelect}>
-                스테이지 선택
-              </Button>
-            </div>
+              </>
+            )}
+            {status === 'continue_prompt' && (
+              <>
+                <span className="text-5xl">🤔</span>
+                <h2 className="text-2xl font-bold text-foreground">
+                  이동을 모두 사용했습니다
+                </h2>
+                <p className="text-muted-foreground">
+                  계속 플레이하시겠습니까?
+                </p>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={onDecline}>
+                    포기
+                  </Button>
+                  <Button onClick={onContinue}>
+                    계속하기
+                  </Button>
+                </div>
+              </>
+            )}
+            {status === 'cleared' && (
+              <>
+                <span className="text-5xl">🎉</span>
+                <h2 className="text-2xl font-bold text-foreground">
+                  게임 성공!
+                </h2>
+                <p className="text-muted-foreground">
+                  축하합니다! 모든 목표를 달성했습니다.
+                </p>
+                <Button onClick={onRestart}>
+                  다시 시도
+                </Button>
+              </>
+            )}
+            {status === 'failed' && (
+              <>
+                <span className="text-5xl">😢</span>
+                <h2 className="text-2xl font-bold text-foreground">
+                  게임 실패
+                </h2>
+                <p className="text-muted-foreground">
+                  다시 도전해보세요!
+                </p>
+                <Button onClick={onRestart}>
+                  다시 시도
+                </Button>
+              </>
+            )}
           </Card>
         </motion.div>
       </motion.div>

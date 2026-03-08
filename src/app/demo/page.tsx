@@ -3,11 +3,11 @@
 import { useState, useCallback, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import type { Board, Tile } from '@/entities/tile';
+import type { Board, ProcessResult } from '@/entities/tile';
 import { createBoard } from '@/entities/tile';
 import type { StageState } from '@/entities/stage';
 import { STAGES, getStage } from '@/entities/stage';
-import { initStageState, useMoveAndTrack, StageHud, GameOverlay } from '@/features/stage-clear';
+import { initStageState, startGame, useMoveAndTrack, continueGame, declineContinue, StageHud, GameOverlay } from '@/features/stage-clear';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent } from '@/shared/ui/card';
 
@@ -20,7 +20,7 @@ type View = 'select' | 'game';
 
 export default function DemoPage() {
   const [view, setView] = useState<View>('select');
-  const [board, setBoard] = useState<Board>(() => createBoard());
+  const [board, setBoard] = useState<Board | null>(null);
   const [stageState, setStageState] = useState<StageState | null>(null);
 
   const startStage = useCallback((stageId: number) => {
@@ -31,10 +31,14 @@ export default function DemoPage() {
     setView('game');
   }, []);
 
+  const handleStart = useCallback(() => {
+    setStageState((prev) => (prev ? startGame(prev) : prev));
+  }, []);
+
   const handleBoardChange = useCallback(
-    (newBoard: Board, removedTiles: Tile[]) => {
-      setBoard(newBoard);
-      setStageState((prev) => (prev ? useMoveAndTrack(prev, removedTiles) : prev));
+    (result: ProcessResult) => {
+      setBoard(result.board);
+      setStageState((prev) => (prev ? useMoveAndTrack(prev, result.allRemoved) : prev));
     },
     []
   );
@@ -44,13 +48,13 @@ export default function DemoPage() {
     startStage(stageState.stage.id);
   }, [stageState, startStage]);
 
-  const handleNextStage = useCallback(() => {
-    if (!stageState) return;
-    const nextId = stageState.stage.id + 1;
-    if (getStage(nextId)) {
-      startStage(nextId);
-    }
-  }, [stageState, startStage]);
+  const handleContinue = useCallback(() => {
+    setStageState((prev) => (prev ? continueGame(prev) : prev));
+  }, []);
+
+  const handleDecline = useCallback(() => {
+    setStageState((prev) => (prev ? declineContinue(prev) : prev));
+  }, []);
 
   const handleStageSelect = useCallback(() => {
     setView('select');
@@ -59,7 +63,7 @@ export default function DemoPage() {
 
   if (view === 'select') {
     return (
-      <main className="flex min-h-screen flex-col items-center gap-8 bg-background p-8">
+      <main className="flex min-h-screen flex-col items-center gap-8 p-8">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
             <Link href="/">← 홈</Link>
@@ -105,7 +109,7 @@ export default function DemoPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center gap-6 bg-background p-4">
+    <main className="flex min-h-screen flex-col items-center gap-6 p-4">
       <div className="flex w-full max-w-lg items-center gap-4">
         <Button variant="ghost" size="sm" onClick={handleStageSelect}>
           ← 스테이지 선택
@@ -115,22 +119,26 @@ export default function DemoPage() {
       {stageState && <StageHud stageState={stageState} />}
 
       <div className="relative">
-        <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Loading...</div>}>
-          <PuzzleBoard3D
-            board={board}
-            onBoardChange={handleBoardChange}
-            disabled={stageState?.status !== 'playing'}
-          />
-        </Suspense>
+        {board ? (
+          <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Loading...</div>}>
+            <PuzzleBoard3D
+              board={board}
+              setBoard={setBoard}
+              onBoardChange={handleBoardChange}
+              disabled={!stageState || stageState.status !== 'playing'}
+            />
+          </Suspense>
+        ) : (
+          <div className="flex items-center justify-center h-64 rounded-xl bg-muted/30" style={{ width: 400 }} />
+        )}
 
         {stageState && (
           <GameOverlay
             status={stageState.status}
+            onStart={handleStart}
             onRestart={handleRestart}
-            onNextStage={
-              getStage(stageState.stage.id + 1) ? handleNextStage : undefined
-            }
-            onStageSelect={handleStageSelect}
+            onContinue={handleContinue}
+            onDecline={handleDecline}
           />
         )}
       </div>
