@@ -1,117 +1,31 @@
 'use client';
 
-import { useCallback, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Board, Position, Tile } from '@/entities/tile';
+import type { Board, ProcessResult } from '@/entities/tile';
 import { TileIcon } from '@/entities/tile';
 import { TILE_SIZE, TILE_GAP, ANIMATION_DURATION } from '@/shared/config/constants';
-import { isAdjacent, processSwap } from '../model';
+import { usePuzzleInteraction } from '../hooks/usePuzzleInteraction';
 
 interface PuzzleBoardProps {
   board: Board;
-  onBoardChange: (board: Board, removedTiles: Tile[]) => void;
+  setBoard: (board: Board) => void;
+  onBoardChange: (result: ProcessResult) => void;
   disabled?: boolean;
 }
 
-export function PuzzleBoard({ board, onBoardChange, disabled = false }: PuzzleBoardProps) {
-  const [selected, setSelected] = useState<Position | null>(null);
-  const [animating, setAnimating] = useState(false);
+export function PuzzleBoard({ board, setBoard, onBoardChange, disabled = false }: PuzzleBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null);
 
   const rows = board.length;
   const cols = rows > 0 ? board[0]!.length : 0;
 
-  const handleTileClick = useCallback(
-    (row: number, col: number) => {
-      if (animating || disabled) return;
-
-      const pos: Position = { row, col };
-
-      if (!selected) {
-        setSelected(pos);
-        return;
-      }
-
-      if (selected.row === row && selected.col === col) {
-        setSelected(null);
-        return;
-      }
-
-      if (!isAdjacent(selected, pos)) {
-        setSelected(pos);
-        return;
-      }
-
-      // Attempt swap
-      setAnimating(true);
-      const result = processSwap(board, selected, pos);
-
-      if (!result) {
-        // Invalid swap — animate back
-        setTimeout(() => {
-          setAnimating(false);
-          setSelected(null);
-        }, ANIMATION_DURATION.swap * 1000);
-        setSelected(null);
-        return;
-      }
-
-      // Animate through steps
-      const delay = (ANIMATION_DURATION.swap + ANIMATION_DURATION.remove + ANIMATION_DURATION.fall) * 1000;
-      setTimeout(() => {
-        onBoardChange(result.board, result.allRemoved);
-        setAnimating(false);
-        setSelected(null);
-      }, delay);
-    },
-    [board, selected, animating, disabled, onBoardChange]
-  );
-
-  // Touch/drag support
-  const dragStart = useRef<Position | null>(null);
-
-  const handlePointerDown = useCallback(
-    (row: number, col: number) => {
-      if (animating || disabled) return;
-      dragStart.current = { row, col };
-    },
-    [animating, disabled]
-  );
-
-  const handlePointerUp = useCallback(
-    (row: number, col: number) => {
-      if (!dragStart.current || animating || disabled) return;
-
-      const start = dragStart.current;
-      dragStart.current = null;
-
-      if (start.row === row && start.col === col) {
-        handleTileClick(row, col);
-        return;
-      }
-
-      if (isAdjacent(start, { row, col })) {
-        setSelected(null);
-        setAnimating(true);
-
-        const result = processSwap(board, start, { row, col });
-
-        if (!result) {
-          setTimeout(() => {
-            setAnimating(false);
-          }, ANIMATION_DURATION.swap * 1000);
-          return;
-        }
-
-        const delay = (ANIMATION_DURATION.swap + ANIMATION_DURATION.remove + ANIMATION_DURATION.fall) * 1000;
-        setTimeout(() => {
-          onBoardChange(result.board, result.allRemoved);
-          setAnimating(false);
-        }, delay);
-      }
-    },
-    [board, animating, disabled, handleTileClick, onBoardChange]
-  );
+  const { selected, handlePointerDown, handlePointerUp } = usePuzzleInteraction({
+    board,
+    setBoard,
+    onBoardChange,
+    disabled,
+  });
 
   const boardWidth = cols * (TILE_SIZE + TILE_GAP) - TILE_GAP;
   const boardHeight = rows * (TILE_SIZE + TILE_GAP) - TILE_GAP;
@@ -129,7 +43,7 @@ export function PuzzleBoard({ board, onBoardChange, disabled = false }: PuzzleBo
         className="relative"
         style={{ width: boardWidth, height: boardHeight }}
       >
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="sync">
           {board.map((row, r) =>
             row.map((tile, c) => {
               if (!tile) return null;
@@ -140,8 +54,12 @@ export function PuzzleBoard({ board, onBoardChange, disabled = false }: PuzzleBo
               return (
                 <motion.div
                   key={tile.id}
-                  layout
-                  initial={{ scale: 0, opacity: 0 }}
+                  initial={{
+                    scale: 0.5,
+                    opacity: 0,
+                    x: c * (TILE_SIZE + TILE_GAP),
+                    y: -(TILE_SIZE + TILE_GAP),
+                  }}
                   animate={{
                     scale: 1,
                     opacity: 1,
@@ -150,9 +68,10 @@ export function PuzzleBoard({ board, onBoardChange, disabled = false }: PuzzleBo
                   }}
                   exit={{ scale: 0, opacity: 0 }}
                   transition={{
-                    layout: { duration: ANIMATION_DURATION.fall, type: 'spring', bounce: 0.2 },
+                    x: { duration: ANIMATION_DURATION.fall, type: 'spring', bounce: 0.15 },
+                    y: { duration: ANIMATION_DURATION.fall, type: 'spring', bounce: 0.15 },
                     scale: { duration: ANIMATION_DURATION.spawn },
-                    opacity: { duration: ANIMATION_DURATION.spawn },
+                    opacity: { duration: ANIMATION_DURATION.spawn * 0.5 },
                   }}
                   className="absolute cursor-pointer select-none"
                   style={{ width: TILE_SIZE, height: TILE_SIZE }}

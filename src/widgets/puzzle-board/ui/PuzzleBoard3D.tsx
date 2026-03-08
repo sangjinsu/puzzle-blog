@@ -1,22 +1,22 @@
 'use client';
 
-import { useCallback, useState, useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrthographicCamera } from '@react-three/drei';
 import { animated, useSpring } from '@react-spring/three';
-import type { Board, Position, Tile } from '@/entities/tile';
+import type { Board, Tile, ProcessResult } from '@/entities/tile';
 import { Tile3D } from '@/entities/tile/ui/Tile3D';
 import {
   TILE_3D_SIZE,
   TILE_3D_GAP,
   CAMERA_ZOOM,
-  ANIMATION_DURATION,
 } from '@/shared/config/constants';
-import { isAdjacent, processSwap } from '../model';
+import { usePuzzleInteraction } from '../hooks/usePuzzleInteraction';
 
 interface PuzzleBoard3DProps {
   board: Board;
-  onBoardChange: (board: Board, removedTiles: Tile[]) => void;
+  setBoard: (board: Board) => void;
+  onBoardChange: (result: ProcessResult) => void;
   disabled?: boolean;
 }
 
@@ -44,7 +44,7 @@ function AnimatedTile({ worldPos, tile, selected, onPointerDown, onPointerUp }: 
   const spring = useSpring({
     position: [worldPos[0], 0, worldPos[2]] as [number, number, number],
     scale: 1,
-    from: { position: [worldPos[0], 0.5, worldPos[2]] as [number, number, number], scale: 0 },
+    from: { position: [worldPos[0], 0, worldPos[2] - 1.5] as [number, number, number], scale: 0.7 },
     config: { tension: 300, friction: 25 },
   });
 
@@ -61,10 +61,13 @@ function AnimatedTile({ worldPos, tile, selected, onPointerDown, onPointerUp }: 
   );
 }
 
-function BoardScene({ board, onBoardChange, disabled = false }: PuzzleBoard3DProps) {
-  const [selected, setSelected] = useState<Position | null>(null);
-  const [animating, setAnimating] = useState(false);
-  const dragStart = useRef<Position | null>(null);
+function BoardScene({ board, setBoard, onBoardChange, disabled = false }: PuzzleBoard3DProps) {
+  const { selected, handlePointerDown, handlePointerUp } = usePuzzleInteraction({
+    board,
+    setBoard,
+    onBoardChange,
+    disabled,
+  });
 
   const rows = board.length;
   const cols = rows > 0 ? board[0]!.length : 0;
@@ -72,100 +75,6 @@ function BoardScene({ board, onBoardChange, disabled = false }: PuzzleBoard3DPro
 
   const boardWidth = cols * spacing;
   const boardHeight = rows * spacing;
-
-  const handleTileClick = useCallback(
-    (row: number, col: number) => {
-      if (animating || disabled) return;
-
-      const pos: Position = { row, col };
-
-      if (!selected) {
-        setSelected(pos);
-        return;
-      }
-
-      if (selected.row === row && selected.col === col) {
-        setSelected(null);
-        return;
-      }
-
-      if (!isAdjacent(selected, pos)) {
-        setSelected(pos);
-        return;
-      }
-
-      setAnimating(true);
-      const result = processSwap(board, selected, pos);
-
-      if (!result) {
-        setTimeout(() => {
-          setAnimating(false);
-          setSelected(null);
-        }, ANIMATION_DURATION.swap * 1000);
-        setSelected(null);
-        return;
-      }
-
-      const delay =
-        (ANIMATION_DURATION.swap +
-          ANIMATION_DURATION.remove +
-          ANIMATION_DURATION.fall) *
-        1000;
-      setTimeout(() => {
-        onBoardChange(result.board, result.allRemoved);
-        setAnimating(false);
-        setSelected(null);
-      }, delay);
-    },
-    [board, selected, animating, disabled, onBoardChange]
-  );
-
-  const handlePointerDown = useCallback(
-    (row: number, col: number) => {
-      if (animating || disabled) return;
-      dragStart.current = { row, col };
-    },
-    [animating, disabled]
-  );
-
-  const handlePointerUp = useCallback(
-    (row: number, col: number) => {
-      if (!dragStart.current || animating || disabled) return;
-
-      const start = dragStart.current;
-      dragStart.current = null;
-
-      if (start.row === row && start.col === col) {
-        handleTileClick(row, col);
-        return;
-      }
-
-      if (isAdjacent(start, { row, col })) {
-        setSelected(null);
-        setAnimating(true);
-
-        const result = processSwap(board, start, { row, col });
-
-        if (!result) {
-          setTimeout(() => {
-            setAnimating(false);
-          }, ANIMATION_DURATION.swap * 1000);
-          return;
-        }
-
-        const delay =
-          (ANIMATION_DURATION.swap +
-            ANIMATION_DURATION.remove +
-            ANIMATION_DURATION.fall) *
-          1000;
-        setTimeout(() => {
-          onBoardChange(result.board, result.allRemoved);
-          setAnimating(false);
-        }, delay);
-      }
-    },
-    [board, animating, disabled, handleTileClick, onBoardChange]
-  );
 
   // Memoize tile data for stable animation keys
   const tiles = useMemo(() => {
