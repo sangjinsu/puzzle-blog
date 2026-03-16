@@ -9,8 +9,8 @@ function stepDelay(type: BoardStep['type']): number {
   switch (type) {
     case 'swap': return ANIMATION_DURATION.swap * 1000;
     case 'match':
-    case 'item_activate': return 300;
-    case 'gravity': return 380;
+    case 'item_activate': return ANIMATION_DURATION.remove * 1000 + 100;
+    case 'gravity': return ANIMATION_DURATION.fall * 1000 + 80;
     case 'cascade': return 120;
   }
 }

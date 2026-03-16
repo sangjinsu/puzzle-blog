@@ -1,11 +1,12 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import type { StageStatus } from '@/entities/stage';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 
 interface GameOverlayProps {
-  status: 'ready' | 'playing' | 'continue_prompt' | 'cleared' | 'failed';
+  status: StageStatus;
   onStart?: () => void;
   onRestart: () => void;
   onContinue?: () => void;

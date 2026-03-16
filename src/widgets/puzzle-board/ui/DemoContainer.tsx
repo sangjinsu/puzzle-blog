@@ -5,8 +5,9 @@ import type { Board, ProcessResult } from '@/entities/tile';
 import { createBoard } from '@/entities/tile';
 import type { StageState } from '@/entities/stage';
 import { getStage } from '@/entities/stage';
-import { initStageState, startGame, useMoveAndTrack, continueGame, declineContinue, StageHud, GameOverlay } from '@/features/stage-clear';
+import { initStageState, startGame, useMoveAndTrack, continueGame, declineContinue, forceSuccess, forceFailure, StageHud, GameOverlay } from '@/features/stage-clear';
 import { simulateApiFromResult } from '@/features/game-events';
+import { Button } from '@/shared/ui/button';
 import { PuzzleBoard } from './PuzzleBoardDOM';
 
 interface DemoContainerProps {
@@ -90,6 +91,17 @@ export function DemoContainer({
   return (
     <div className="mx-auto flex flex-col gap-4" style={{ width: BOARD_WIDTH }}>
       <StageHud stageState={stageState} />
+
+      {stageState.status === 'playing' && (
+        <div className="flex gap-2 justify-center">
+          <Button variant="outline" size="sm" onClick={() => setStageState(forceSuccess)}>
+            성공
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setStageState(forceFailure)}>
+            실패
+          </Button>
+        </div>
+      )}
 
       <div className="relative">
         {board ? (

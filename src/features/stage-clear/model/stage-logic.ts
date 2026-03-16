@@ -53,6 +53,14 @@ export function declineContinue(state: StageState): StageState {
   return { ...state, status: 'failed' };
 }
 
+export function forceSuccess(state: StageState): StageState {
+  return { ...state, status: 'cleared' };
+}
+
+export function forceFailure(state: StageState): StageState {
+  return { ...state, status: 'failed' };
+}
+
 export function isObjectiveComplete(obj: Objective): boolean {
   return obj.current >= obj.count;
 }

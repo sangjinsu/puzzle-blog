@@ -66,7 +66,7 @@ export function PuzzleBoard({ board, setBoard, onBoardChange, disabled = false }
                     x: c * (TILE_SIZE + TILE_GAP),
                     y: r * (TILE_SIZE + TILE_GAP),
                   }}
-                  exit={{ scale: 0, opacity: 0 }}
+                  exit={{ scale: 0, opacity: 0, transition: { duration: ANIMATION_DURATION.remove } }}
                   transition={{
                     x: { duration: ANIMATION_DURATION.fall, type: 'spring', bounce: 0.15 },
                     y: { duration: ANIMATION_DURATION.fall, type: 'spring', bounce: 0.15 },

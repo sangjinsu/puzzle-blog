@@ -21,4 +21,3 @@ export {
 } from './lib/factory';
 
 export { TileIcon } from './ui/TileIcon';
-export { Tile3D } from './ui/Tile3D';

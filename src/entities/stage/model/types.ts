@@ -13,9 +13,11 @@ export interface Stage {
   objectives: Objective[];
 }
 
+export type StageStatus = 'ready' | 'playing' | 'continue_prompt' | 'cleared' | 'failed';
+
 export interface StageState {
   stage: Stage;
   movesLeft: number;
   objectives: Objective[];
-  status: 'ready' | 'playing' | 'continue_prompt' | 'cleared' | 'failed';
+  status: StageStatus;
 }
