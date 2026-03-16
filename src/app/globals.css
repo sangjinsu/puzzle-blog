@@ -24,6 +24,10 @@
   --color-ring: var(--ring);
 }
 
+body {
+  word-break: keep-all;
+}
+
 :root {
   --background: #FFFFFF;
   --foreground: #1E293B;
