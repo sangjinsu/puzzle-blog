@@ -5,13 +5,14 @@ import { DemoContainer } from '@/widgets/puzzle-board/ui/DemoContainer';
 import { SequenceDiagram } from '@/widgets/infographic-viewer/ui/SequenceDiagram';
 import { CodeViewer } from '@/widgets/code-viewer';
 import { KeyTakeaways } from '@/views/content/ui/KeyTakeaways';
+import { ComparisonSection } from '@/views/content/ui/ComparisonSection';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import { cn } from '@/shared/lib/utils';
-import { gameFlowConfig } from '../model/config';
+import { lifeConfig } from '../model/config';
 
-const config = gameFlowConfig;
+const config = lifeConfig;
 
-export function GameFlowPage() {
+export function LifePage() {
   const [activeTab, setActiveTab] = useState(0);
   const activeSection = config.apiSections[activeTab]!;
 
@@ -69,6 +70,24 @@ export function GameFlowPage() {
           </div>
         </GlassPanel>
       </div>
+
+      {/* 게임 비교 */}
+      {config.comparison.games.length > 0 ? (
+        <ComparisonSection
+          features={config.comparison.features}
+          games={config.comparison.games}
+        />
+      ) : (
+        <section className="flex flex-col gap-4">
+          <h2 className="text-2xl font-bold text-foreground">게임 비교</h2>
+          <GlassPanel className="flex items-center justify-center p-16">
+            <div className="text-center">
+              <span className="text-5xl">🚧</span>
+              <p className="mt-4 text-lg text-muted-foreground">작성중입니다</p>
+            </div>
+          </GlassPanel>
+        </section>
+      )}
     </div>
   );
 }

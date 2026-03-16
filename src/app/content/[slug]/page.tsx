@@ -2,7 +2,7 @@ import { NAV_ITEMS } from '@/shared/config/navigation';
 import { GlassPanel } from '@/shared/ui/glass-panel';
 import { notFound } from 'next/navigation';
 
-const CONTENT_SLUGS = ['life', 'quest', 'daily-mission', 'season-pass', 'event', 'ranking'];
+const CONTENT_SLUGS = ['quest', 'daily-mission', 'season-pass', 'event', 'ranking'];
 
 export function generateStaticParams() {
   return CONTENT_SLUGS.map((slug) => ({ slug }));

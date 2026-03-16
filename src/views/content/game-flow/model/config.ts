@@ -50,6 +50,9 @@ export const gameFlowConfig: GameFlowPageConfig = {
         { from: 'client', to: 'server', label: 'POST /api/game/start { stageId, readyItems }' },
         { from: 'server', to: 'db', label: 'SELECT game_session (userId)' },
         { from: 'db', to: 'server', label: 'session { seed }', isResponse: true },
+        { from: 'server', to: 'db', label: 'SELECT user_life (userId)' },
+        { from: 'db', to: 'server', label: 'userLife { current, timedLife }', isResponse: true },
+        { from: 'server', to: 'server', label: '라이프 검증 & 소모 (시간제 우선)', isSelf: true },
         { from: 'server', to: 'server', label: '레디 아이템 검증 & 소모', isSelf: true },
         { from: 'server', to: 'db', label: 'INSERT play_log, user_stage; UPDATE user_items' },
         { from: 'db', to: 'server', label: 'OK', isResponse: true },
@@ -70,6 +73,11 @@ export const gameFlowConfig: GameFlowPageConfig = {
 
     session, err := s.repo.GetSessionByUser(ctx, tx, req.UserID)
     if err != nil {
+        return nil, err
+    }
+
+    // 라이프 검증 & 소모 (시간제 우선)
+    if err := s.lifeService.ConsumeLife(ctx, tx, req.UserID); err != nil {
         return nil, err
     }
 
@@ -102,6 +110,9 @@ public StartResponse startGame(StartRequest request) {
     GameSession session = sessionRepo.findByUserId(request.getUserId())
         .orElseThrow(SessionNotFoundException::new);
 
+    // 라이프 검증 & 소모 (시간제 우선)
+    lifeService.consumeLife(request.getUserId());
+
     // 레디 아이템 검증 & 소모
     List<ConsumedItem> consumed = validateAndConsumeItems(
         request.getUserId(), request.getReadyItems());
@@ -125,6 +136,9 @@ public StartResponse startGame(StartRequest request) {
         if not session:
             raise SessionNotFoundError(user_id)
 
+        # 라이프 검증 & 소모 (시간제 우선)
+        self.life_service.consume_life(user_id)
+
         # 레디 아이템 검증 & 소모
         consumed = self._validate_and_consume_items(user_id, ready_items)
 
@@ -145,6 +159,9 @@ public StartResponse startGame(StartRequest request) {
   return db.transaction(async (tx) => {
     const session = await sessionRepo.findByUserId(tx, userId);
     if (!session) throw new Error("Session not found");
+
+    // 라이프 검증 & 소모 (시간제 우선)
+    await lifeService.consumeLife(tx, userId);
 
     // 레디 아이템 검증 & 소모
     const consumed = await validateAndConsumeItems(tx, userId, readyItems);

@@ -58,7 +58,7 @@ export function forceSuccess(state: StageState): StageState {
 }
 
 export function forceFailure(state: StageState): StageState {
-  return { ...state, status: 'failed' };
+  return { ...state, status: 'continue_prompt' };
 }
 
 export function isObjectiveComplete(obj: Objective): boolean {
