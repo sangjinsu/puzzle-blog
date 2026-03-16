@@ -197,50 +197,67 @@ src/
 ├── app/                        # [App Layer] Next.js App Router
 │   ├── layout.tsx
 │   ├── page.tsx                # 홈: 데모 소개 + 블로그 설명
-│   ├── posts/[slug]/page.tsx
-│   └── demo/page.tsx
-├── pages/                      # [Pages Layer] 페이지 컴포지션
-│   ├── home/ui/
-│   ├── post-detail/ui/
-│   └── demo/ui/
+│   └── content/                # 콘텐츠 페이지 라우트
+│       ├── game-flow/page.tsx  #   게임 플로우 (Start/Continue/Clear/Fail)
+│       ├── life/page.tsx       #   라이프 시스템 (회복/소모/시간제/충전)
+│       └── [slug]/page.tsx     #   준비중 콘텐츠 (quest, daily-mission 등)
+├── views/                      # [Views Layer] 페이지 컴포지션
+│   └── content/                # 콘텐츠 뷰 (config + UI)
+│       ├── game-flow/{model,ui}/
+│       ├── life/{model,ui}/
+│       ├── model/              # 공통 타입 (ComparisonGame 등)
+│       └── ui/                 # 공통 컴포넌트 (KeyTakeaways, ComparisonSection 등)
 ├── widgets/                    # [Widgets Layer] 독립 UI 블록
-│   ├── puzzle-board/{ui,model}/
-│   ├── infographic-viewer/ui/  # FlowDiagram, CompareChart, SequenceDiagram 등
-│   ├── post-list/ui/
-│   └── code-viewer/ui/         # Go/Java/Python/TS 탭 코드 블록
+│   ├── puzzle-board/{ui,model,hooks}/
+│   ├── infographic-viewer/{ui,model,lib}/  # SequenceDiagram 등
+│   ├── code-viewer/{ui,model}/             # Go/Java/Python/TS 탭 코드 블록
+│   ├── api-log-panel/ui/
+│   └── sidebar/ui/
 ├── features/                   # [Features Layer] 비즈니스 기능
 │   ├── tile-swap/{ui,model}/
-│   ├── match-detection/model/
-│   ├── gravity/model/
-│   ├── item-generation/model/
-│   └── stage-clear/{ui,model}/
+│   ├── match-detection/{model,__tests__}/
+│   ├── gravity/{model,__tests__}/
+│   ├── item-generation/{model,__tests__}/
+│   ├── stage-clear/{ui,model}/
+│   └── game-events/{hooks,model}/
 ├── entities/                   # [Entities Layer] 도메인 객체
 │   ├── tile/{ui,model,lib}/
-│   ├── stage/model/
-│   └── post/{ui,model}/
+│   └── stage/model/
 ├── shared/                     # [Shared Layer] 공통 모듈
 │   ├── ui/
 │   ├── lib/
-│   ├── config/
-│   └── assets/
-└── content/                    # MDX 포스트 (FSD 외부)
+│   └── config/
 ```
 
 ### FSD 레이어 의존성 규칙
 
 ```
-app → pages → widgets → features → entities → shared
+app → views → widgets → features → entities → shared
           (상위 레이어는 하위 레이어만 import 가능)
 ```
 
 | 레이어 | 역할 | 예시 |
 |--------|------|------|
 | **app** | Next.js 라우팅, 글로벌 프로바이더 | `layout.tsx`, `page.tsx` |
-| **pages** | 페이지 단위 컴포지션 | 위젯 조합, 데이터 페칭 |
-| **widgets** | 독립적으로 동작하는 UI 블록 | 퍼즐 보드, 인포그래픽 뷰어, 코드 뷰어 |
+| **views** | 페이지 단위 컴포지션 | 콘텐츠 config + 위젯 조합 |
+| **widgets** | 독립적으로 동작하는 UI 블록 | 퍼즐 보드, 시퀀스 다이어그램, 코드 뷰어 |
 | **features** | 사용자 시나리오 단위 기능 | 타일 스왑, 매치 감지, 스테이지 클리어 |
-| **entities** | 비즈니스 도메인 객체 | Tile, Stage, Post |
+| **entities** | 비즈니스 도메인 객체 | Tile, Stage |
 | **shared** | 재사용 유틸, UI 킷, 상수 | 색상, 타입, 공통 컴포넌트 |
+
+### 콘텐츠 페이지 패턴
+
+콘텐츠 페이지는 **탭 기반 API 섹션** 패턴을 따릅니다:
+
+```
+views/content/{topic}/
+├── model/config.ts   # API 섹션 정의 (시퀀스 + 코드 스니펫 4개 언어)
+└── ui/Page.tsx        # 탭 UI (Header → Demo + Takeaways → API 탭 → 비교)
+```
+
+- `GameFlowPageConfig` 타입을 기반으로 `apiSections` 배열 구성
+- 각 섹션: `SequenceDiagram` + `CodeViewer` (Go/Java/Python/TypeScript)
+- 서비스 메서드(소모/충전)는 독립 API가 아닌 다른 API 트랜잭션 내부에서 호출되는 패턴
 
 ---
 
